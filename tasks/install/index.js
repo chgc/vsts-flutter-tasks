@@ -74,9 +74,9 @@ function extractFile(bundleFile) {
         return tool.extract7z(bundleFile);
     if (extName === 'zip')
         return tool.extractZip(bundleFile);
-    if (extName === 'xz')
-        return extractTarXZ(bundleFile);
-    return tool.extractTar(bundleFile);
+    return extractTarXZ(bundleFile);
+    // if (extName === 'xz') return extractTarXZ(bundleFile);
+    // return tool.extractTar(bundleFile);
 }
 function extractTarXZ(file, destination) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -85,7 +85,7 @@ function extractTarXZ(file, destination) {
         console.log(tl.loc('TOOL_LIB_ExtractingArchive'));
         let dest = _createExtractFolder(destination);
         let tr = tl.tool('tar');
-        tr.arg(['xvf', dest, '-f', file]);
+        tr.arg(['xC', dest, '-f', file]);
         yield tr.exec();
         return dest;
     });

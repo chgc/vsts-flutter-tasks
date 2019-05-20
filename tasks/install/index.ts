@@ -99,8 +99,9 @@ function extractFile(bundleFile: string) {
   const extName = bundleFile.substring(bundleFile.lastIndexOf('.') + 1);
   if (extName === '7z') return tool.extract7z(bundleFile);
   if (extName === 'zip') return tool.extractZip(bundleFile);
-  if (extName === 'xz') return extractTarXZ(bundleFile);
-  return tool.extractTar(bundleFile);
+  return extractTarXZ(bundleFile);
+  // if (extName === 'xz') return extractTarXZ(bundleFile);
+  // return tool.extractTar(bundleFile);
 }
 
 async function extractTarXZ(
@@ -114,7 +115,7 @@ async function extractTarXZ(
   let dest = _createExtractFolder(destination);
 
   let tr: trm.ToolRunner = tl.tool('tar');
-  tr.arg(['xvf', dest, '-f', file]);
+  tr.arg(['xC', dest, '-f', file]);
 
   await tr.exec();
   return dest;

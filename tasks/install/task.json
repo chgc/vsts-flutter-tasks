@@ -1,5 +1,5 @@
 {
-  "id": "fca8d27d-85f4-4d5d-a519-8d7a7edf15d7",
+  "id": "ce560423-1c33-4f54-981f-b0ace156188b",
   "name": "FlutterInstall",
   "friendlyName": "Flutter Install",
   "description": "Install the Flutter environment.",
@@ -8,8 +8,8 @@
   "author": "KevinYang",
   "version": {
     "Major": 0,
-    "Minor": 0,
-    "Patch": 5
+    "Minor": 2,
+    "Patch": 17
   },
   "instanceNameFormat": "Flutter Install",
   "inputs": [
