@@ -1,91 +1,78 @@
 {
-    "manifestVersion": 1,
-    "id": "flutter",
-    "version": "0.2.15",
-    "name": "Flutter",
-    "description": "Flutter extension for Azure DevOps",
-    "publisher": "aloisdeniel",
-    "public": true,
-    "targets": [
-        {
-            "id": "Microsoft.VisualStudio.Services"
-        }
-    ],
-    "categories": [
-        "Pipelines"
-    ],
-    "icons": {
-        "default": "icon.png"
+  "manifestVersion": 1,
+  "id": "cky-flutter",
+  "version": "0.0.5",
+  "name": "Flutter",
+  "description": "Flutter extension for Azure DevOps",
+  "publisher": "kevinyang",
+  "public": false,
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "categories": ["Azure Pipelines"],
+  "icons": {
+    "default": "icon.png"
+  },
+  "screenshots": [],
+  "content": {
+    "details": {
+      "path": "README.md"
     },
-    "screenshots": [],
-    "content": {
-        "details": {
-            "path": "README.md"
-        },
-        "license": {
-            "path": "LICENSE"
-        }
+    "license": {
+      "path": "LICENSE"
+    }
+  },
+  "links": {
+    "support": {
+      "uri": "https://github.com/chgc/vsts-flutter-tasks/issues"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/chgc/vsts-flutter-tasks"
+  },
+  "tags": ["flutter", "mobile", "ios", "android"],
+  "files": [
+    {
+      "path": "tasks/install"
     },
-    "links": {
-        "support": {
-            "uri": "https://github.com/aloisdeniel/vsts-flutter-tasks/issues"
-        }
+    {
+      "path": "tasks/build"
     },
-    "repository": {
-        "type": "git",
-        "uri": "https://github.com/aloisdeniel/vsts-flutter-tasks"
+    {
+      "path": "tasks/test"
     },
-    "tags": [
-        "flutter",
-        "mobile",
-        "ios",
-        "android"
-    ],
-    "files": [
-        {
-            "path": "tasks/install"
-        },
-        {
-            "path": "tasks/build"
-        },
-        {
-            "path": "tasks/test"
-        },
-        {
-            "path": "images",
-            "addressable": true
-        }
-    ],
-    "contributions": [
-        {
-            "id": "flutter-install",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "tasks/install"
-            }
-        },
-        {
-            "id": "flutter-build",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "tasks/build"
-            }
-        },
-        {
-            "id": "flutter-test",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "tasks/test"
-            }
-        }
-    ]
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ],
+  "contributions": [
+    {
+      "id": "flutter-install",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "tasks/install"
+      }
+    },
+    {
+      "id": "flutter-build",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "tasks/build"
+      }
+    },
+    {
+      "id": "flutter-test",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "tasks/test"
+      }
+    }
+  ]
 }

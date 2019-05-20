@@ -10,13 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const xml2js = require("xml2js");
-const task = require("vsts-task-lib/task");
+const task = require("azure-pipelines-task-lib/task");
 const FLUTTER_TOOL_PATH_ENV_VAR = 'FlutterToolPath';
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         // 1. Check flutter environment
-        var flutterPath = task.getVariable(FLUTTER_TOOL_PATH_ENV_VAR) || process.env[FLUTTER_TOOL_PATH_ENV_VAR];
-        flutterPath = path.join(flutterPath, "flutter");
+        var flutterPath = task.getVariable(FLUTTER_TOOL_PATH_ENV_VAR) ||
+            process.env[FLUTTER_TOOL_PATH_ENV_VAR];
+        flutterPath = path.join(flutterPath, 'flutter');
         if (!flutterPath) {
             throw new Error(`The '${FLUTTER_TOOL_PATH_ENV_VAR}' environment variable must be set before using this task (you can use 'flutterinstall' task).`);
         }
@@ -32,7 +33,7 @@ function main() {
         let updateGoldens = task.getBoolInput('updateGoldens', false);
         let concurrency = task.getInput('concurrency', false);
         // 5. Running tests
-        var results = yield runTests(flutterPath, (concurrency ? Number(concurrency) : null), updateGoldens, testName, testPlainName);
+        var results = yield runTests(flutterPath, concurrency ? Number(concurrency) : null, updateGoldens, testName, testPlainName);
         // 6. Publishing tests
         yield publishTests(results);
         if (results.isSuccess) {
@@ -45,16 +46,16 @@ function main() {
 }
 function publishTests(results) {
     return __awaiter(this, void 0, void 0, function* () {
-        var publisher = new task.TestPublisher("JUnit");
+        var publisher = new task.TestPublisher('JUnit');
         task.debug(`results: ` + JSON.stringify(results));
         // 1. Generating Junit XML result file
         var junitResults = createJunitResults(results);
         var xmlBuilder = new xml2js.Builder();
         var xml = xmlBuilder.buildObject(junitResults);
-        var xmlPath = path.join(task.cwd(), "junit.xml");
+        var xmlPath = path.join(task.cwd(), 'junit.xml');
         task.writeFile(xmlPath, xml);
         // 2. Publishing to task
-        publisher.publish([xmlPath], false, "", "", "", true, "VSTS - Flutter");
+        publisher.publish([xmlPath], false, '', '', '', true, 'VSTS - Flutter');
     });
 }
 function runTests(flutter, concurrency, updateGoldens, name, plainName) {
@@ -62,16 +63,16 @@ function runTests(flutter, concurrency, updateGoldens, name, plainName) {
         let testRunner = task.tool(flutter);
         testRunner.arg(['test', '--pub']);
         if (updateGoldens) {
-            testRunner.arg("--update-goldens");
+            testRunner.arg('--update-goldens');
         }
         if (name) {
-            testRunner.arg("--name=" + name);
+            testRunner.arg('--name=' + name);
         }
         if (plainName) {
-            testRunner.arg("--plain-name=" + plainName);
+            testRunner.arg('--plain-name=' + plainName);
         }
         if (concurrency) {
-            testRunner.arg("--concurrency=" + concurrency);
+            testRunner.arg('--concurrency=' + concurrency);
         }
         var currentSuite = null;
         var results = {
@@ -83,7 +84,7 @@ function runTests(flutter, concurrency, updateGoldens, name, plainName) {
             let loadingMatch = testSuiteRegex.exec(line);
             if (loadingMatch) {
                 var newSuite = {
-                    title: path.basename(loadingMatch[3], ".dart"),
+                    title: path.basename(loadingMatch[3], '.dart'),
                     isSuccess: false,
                     succeeded: 0,
                     failed: 0,
@@ -117,7 +118,7 @@ function createTestCase(suite, output) {
             title: title.trim(),
             isSuccess: false,
             started: new Date(),
-            ended: new Date,
+            ended: new Date()
         };
         var hasNewCase = false;
         if (suite.succeeded != successes) {
@@ -143,40 +144,40 @@ function createJunitResults(results) {
     results.suites.forEach(suite => {
         var testCases = [];
         suite.cases.forEach(c => {
-            var duration = (c.ended.getTime() - c.started.getTime());
-            var s = (duration / 1000);
+            var duration = c.ended.getTime() - c.started.getTime();
+            var s = duration / 1000;
             var testCase = {
-                "$": {
-                    "name": c.title,
-                    "classname": c.title,
-                    "time": s,
+                $: {
+                    name: c.title,
+                    classname: c.title,
+                    time: s
                 }
             };
             if (!c.isSuccess) {
-                testCase["failure"] = {
-                    "$": {
-                        "type": "FlutterError",
+                testCase['failure'] = {
+                    $: {
+                        type: 'FlutterError'
                     }
                 };
             }
             testCases.push(testCase);
         });
         var testSuite = {
-            "$": {
-                "name": suite.title,
-                "timestamp": new Date().toISOString(),
-                "errors": 0,
-                "skipped": 0,
-                "failures": suite.failed,
-                "tests": (suite.failed + suite.succeeded)
+            $: {
+                name: suite.title,
+                timestamp: new Date().toISOString(),
+                errors: 0,
+                skipped: 0,
+                failures: suite.failed,
+                tests: suite.failed + suite.succeeded
             },
-            "testcase": testCases
+            testcase: testCases
         };
         testSuites.push(testSuite);
     });
     return {
-        "testsuites": {
-            "testsuite": testSuites
+        testsuites: {
+            testsuite: testSuites
         }
     };
 }

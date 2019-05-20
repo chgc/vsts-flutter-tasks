@@ -1,8 +1,11 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as request from 'request-promise';
-import * as task from 'vsts-task-lib/task';
-import * as tool from 'vsts-task-tool-lib/tool';
+import * as task from 'azure-pipelines-task-lib';
+import * as tool from 'azure-pipelines-tool-lib/tool';
+import * as tl from 'azure-pipelines-task-lib/task';
+import * as trm from 'azure-pipelines-task-lib/toolrunner';
+const uuidV4 = require('uuid/v4');
 
 const FLUTTER_TOOL_NAME: string = 'Flutter';
 const FLUTTER_EXE_RELATIVEPATH = 'flutter/bin';
@@ -82,7 +85,7 @@ async function downloadAndCacheSdk(
 
   // 2. Extracting SDK bundle
   task.debug(`Extracting '${downloadUrl}' archive`);
-  const bundleDir = await tool.extractZip(bundleZip);
+  const bundleDir = await extractFile(bundleZip);
   task.debug(`Extracted to '${bundleDir}' '${downloadUrl}' archive`);
 
   // 3. Adding SDK bundle to cache
@@ -90,6 +93,52 @@ async function downloadAndCacheSdk(
     `Adding '${bundleDir}' to cache (${FLUTTER_TOOL_NAME},${versionSpec}, ${arch})`
   );
   tool.cacheDir(bundleDir, FLUTTER_TOOL_NAME, versionSpec, arch);
+}
+
+function extractFile(bundleFile: string) {
+  const extName = bundleFile.substring(bundleFile.lastIndexOf('.') + 1);
+  if (extName === '7z') return tool.extract7z(bundleFile);
+  if (extName === 'zip') return tool.extractZip(bundleFile);
+  if (extName === 'xz') return extractTarXZ(bundleFile);
+  return tool.extractTar(bundleFile);
+}
+
+async function extractTarXZ(
+  file: string,
+  destination?: string
+): Promise<string> {
+  // mkdir -p node/4.7.0/x64
+  // tar xzC ./node/4.7.0/x64 -f node-v4.7.0-darwin-x64.tar.gz --strip-components 1
+
+  console.log(tl.loc('TOOL_LIB_ExtractingArchive'));
+  let dest = _createExtractFolder(destination);
+
+  let tr: trm.ToolRunner = tl.tool('tar');
+  tr.arg(['xvf', dest, '-f', file]);
+
+  await tr.exec();
+  return dest;
+}
+
+function _createExtractFolder(dest?: string): string {
+  if (!dest) {
+    // create a temp dir
+    dest = path.join(_getAgentTemp(), uuidV4());
+  }
+
+  tl.mkdirP(dest);
+
+  return dest;
+}
+
+function _getAgentTemp(): string {
+  tl.assertAgent('2.115.0');
+  let tempDirectory = tl.getVariable('Agent.TempDirectory');
+  if (!tempDirectory) {
+    throw new Error('Agent.TempDirectory is not set');
+  }
+
+  return tempDirectory;
 }
 
 async function findLatestSdkVersion(

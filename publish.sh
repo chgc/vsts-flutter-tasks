@@ -1,13 +1,13 @@
 # Build TS
-npm install -g typescript
+# npm install -g typescript
 cd ./tasks/test
-npm install
+# npm install
 tsc 
 cd ../install
-npm install
+# npm install
 tsc
 cd ../build
-npm install
+# npm install
 tsc 
 cd ../../
 
@@ -15,4 +15,4 @@ cd ../../
 npm i -g tfx-cli
 tfx extension create --manifest-globs vss-extension.json
 
-# > Upload from https://marketplace.visualstudio.com/manage/publishers/aloisdeniel
+# > Upload from https://marketplace.visualstudio.com/manage/publishers/kevinyang
